@@ -1,0 +1,52 @@
+{
+	"name": "react-stein-router",
+	"description": "A simple react dom router that is typesafe",
+	"license": "MIT",
+	"version": "0.0.1",
+	"type": "module",
+	"main": "./dist/react-stein-router.umd.js",
+	"module": "./dist/react-stein-router.es.js",
+	"types": "./dist/react-stein-router.d.ts",
+	"publishConfig": {
+		"types": "./dist/react-stein-router.d.ts",
+		"main": "./dist/react-stein-router.umd.js",
+		"module": "./dist/react-stein-router.es.js"
+	},
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc && vite build",
+		"build:web": "tsc && vite build --config vite.web.config.ts",
+		"test:unit:coverage": "TZ=UTC pnpm vitest run --coverage --outputFile.junit=./test-results/junit.xml",
+		"test:unit": "TZ=UTC pnpm vitest run --outputFile.junit=./test-results/junit.xml",
+		"test:unit:ci": "pnpm test:unit --coverage --silent",
+		"lint:check": "biome check ./src",
+		"lint:check:write": "biome check --apply-unsafe ./src",
+		"lint:format": "biome format ./src",
+		"lint:format:write": "biome format --write ./src",
+		"lint:all": "pnpm run lint:check && pnpm run lint:format",
+		"preview": "vite preview"
+	},
+	"engines": {
+		"node": "20",
+		"pnpm": "8"
+	},
+	"dependencies": {
+		"debug": "^4.3.4",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.5.3",
+		"@types/debug": "^4.1.12",
+		"@types/react": "^18.2.55",
+		"@types/react-dom": "^18.2.19",
+		"@typescript-eslint/eslint-plugin": "^6.21.0",
+		"@typescript-eslint/parser": "^6.21.0",
+		"@vitejs/plugin-react-swc": "^3.6.0",
+		"@vitest/coverage-v8": "^1.3.0",
+		"typescript": "^5.3.3",
+		"vite": "^5.1.3",
+		"vite-plugin-dts": "^3.7.2",
+		"vitest": "^1.3.0"
+	}
+}

@@ -1,0 +1,8 @@
+# unselect all file
+**
+dist/src/**
+
+# allow list certain files
+!package.json
+!README.md
+!dist/react-stein-router.*
