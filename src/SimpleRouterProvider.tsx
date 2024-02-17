@@ -1,13 +1,14 @@
 import { createContext, useCallback, useEffect, useReducer } from "react";
-import { validatePath } from "./helper";
+import { generatePathFromRoute, validatePath } from "./helper";
 import { onHoldRoute, rootRoute } from "./static";
-import { GenericRoute } from "./types";
+import { GenericRoute, RoutePathBuilder } from "./types";
 
 type SimpleRouterProviderValue = {
 	basePath?: string;
 	navigate: (route: GenericRoute, path: string) => void;
 	navigateReplace: (route: GenericRoute, path: string) => void;
 	navigateSilent: (route: GenericRoute) => void;
+	redirect: (to: RoutePathBuilder) => void;
 	currentRoute: GenericRoute;
 	currentPath: string;
 	isActive: (route: GenericRoute) => boolean;
@@ -17,6 +18,7 @@ export const SimpleRouterContext = createContext<SimpleRouterProviderValue>({
 	navigate: () => {},
 	navigateReplace: () => {},
 	navigateSilent: () => {},
+	redirect: () => {},
 	currentRoute: onHoldRoute,
 	currentPath: onHoldRoute.path,
 	isActive: () => false,
@@ -101,6 +103,23 @@ export const SimpleRouterProvider: React.FC<SimpleRouterProviderProps> = ({
 			payload: { path: window.location.href, route },
 		});
 	}, []);
+	const redirect = useCallback(
+		(to: RoutePathBuilder) => {
+			const routePathBuilder = to;
+			const { route, pathParams, searchParams } = routePathBuilder;
+			const path = generatePathFromRoute(
+				basePath,
+				route,
+				pathParams,
+				searchParams,
+			);
+
+			navigateReplace(route, path);
+
+			return null;
+		},
+		[basePath, navigateReplace],
+	);
 	return (
 		<SimpleRouterContext.Provider
 			value={{
@@ -111,6 +130,7 @@ export const SimpleRouterProvider: React.FC<SimpleRouterProviderProps> = ({
 				currentRoute: state.currentRoute || rootRoute,
 				currentPath: state.currentPath,
 				isActive,
+				redirect,
 			}}
 		>
 			{children}
