@@ -1,15 +1,15 @@
 import debug from "debug";
 import { FC, useContext, useEffect } from "react";
-import { SimpleRouterError } from "./SimpleRouterError";
-import { SimpleRouterContext } from "./SimpleRouterProvider";
+import { RouterError } from "./RouterError";
+import { RouterSwitchContext } from "./RouterProvider";
 import { isPathMatchOfRoute, parsePathToParams } from "./helper";
 import { notFoundRoute, onHoldRoute, rootRoute } from "./static";
 
 const popstateLog = debug("popstate");
 
-export const SimpleRouter: FC = () => {
+export const RouterSwitch: FC = () => {
 	const { currentRoute, navigateSilent, routes, basePath } =
-		useContext(SimpleRouterContext);
+		useContext(RouterSwitchContext);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: we only need to find the initial path once
 	useEffect(() => {
@@ -25,7 +25,7 @@ export const SimpleRouter: FC = () => {
 		if (routes.has(notFoundRoute)) {
 			navigateSilent(notFoundRoute);
 		} else {
-			throw new SimpleRouterError(
+			throw new RouterError(
 				`Path "${currentWindowPath}" not found and notFoundRoute is not setup`,
 			);
 		}
@@ -43,7 +43,7 @@ export const SimpleRouter: FC = () => {
 					return;
 				}
 			}
-			throw new SimpleRouterError("PopStateEvent: route not found");
+			throw new RouterError("PopStateEvent: route not found");
 		};
 		window.addEventListener("popstate", onPopState);
 		return () => window.removeEventListener("popstate", onPopState);
@@ -53,11 +53,11 @@ export const SimpleRouter: FC = () => {
 		return null;
 	}
 	if (!routes.has(rootRoute)) {
-		throw new SimpleRouterError("No root path found");
+		throw new RouterError("No root path found");
 	}
 	const componentCallback = routes.get(currentRoute);
 	if (!componentCallback) {
-		throw new SimpleRouterError("No path found");
+		throw new RouterError("No path found");
 	}
 
 	const params = parsePathToParams(

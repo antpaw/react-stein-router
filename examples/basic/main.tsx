@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
-import { SimpleRouter, SimpleRouterProvider } from "../../src/lib.ts";
+import { RouterProvider, RouterSwitch } from "../../src/lib.ts";
 import "./index.css";
 import { router } from "./routes.tsx";
 
@@ -11,8 +11,8 @@ if (root === null) {
 
 ReactDOM.createRoot(root).render(
 	<StrictMode>
-		<SimpleRouterProvider router={router} basePath="/asdf/noc/vox/oooo">
-			<SimpleRouter />
-		</SimpleRouterProvider>
+		<RouterProvider router={router} basePath="/asdf/noc/vox/oooo">
+			<RouterSwitch />
+		</RouterProvider>
 	</StrictMode>,
 );

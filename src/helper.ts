@@ -1,4 +1,4 @@
-import { SimpleRouterError } from "./SimpleRouterError";
+import { RouterError } from "./RouterError";
 import {
 	ExtractPathParams,
 	GenericRoute,
@@ -9,14 +9,10 @@ import {
 export function validatePath(path: string) {
 	if (path !== "/") {
 		if (path.endsWith("/")) {
-			throw new SimpleRouterError(
-				`Path can not end with a slash => / "${path}"`,
-			);
+			throw new RouterError(`Path can not end with a slash => / "${path}"`);
 		}
 		if (!path.startsWith("/")) {
-			throw new SimpleRouterError(
-				`Path must start with a slash => / "${path}"`,
-			);
+			throw new RouterError(`Path must start with a slash => / "${path}"`);
 		}
 	}
 }

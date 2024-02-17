@@ -33,7 +33,7 @@ function createRoutePathBuilderCallback<
 
 type RoutesWithCallback = Map<GenericRoute, ComponentCallback<string[]>>;
 
-export function simpleRouter() {
+export function steinRouter() {
 	const routes: RoutesWithCallback = new Map();
 
 	function setRootComboCallbackAndAddToAll(callback: ComponentCallback<[]>) {

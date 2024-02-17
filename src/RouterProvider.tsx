@@ -7,7 +7,7 @@ import {
 import { onHoldRoute, rootRoute } from "./static";
 import { ComponentCallback, GenericRoute, RoutePathBuilder } from "./types";
 
-type SimpleRouterProviderValue = {
+type RouterProviderValue = {
 	basePath?: string;
 	navigate: (route: GenericRoute, path: string) => void;
 	navigateReplace: (route: GenericRoute, path: string) => void;
@@ -24,7 +24,7 @@ type RoutesWrapper<T extends string[]> = {
 	readonly routes: Map<GenericRoute, ComponentCallback<T>>;
 };
 
-export const SimpleRouterContext = createContext<SimpleRouterProviderValue>({
+export const RouterSwitchContext = createContext<RouterProviderValue>({
 	navigate: () => {},
 	navigateReplace: () => {},
 	navigateSilent: () => {},
@@ -36,20 +36,20 @@ export const SimpleRouterContext = createContext<SimpleRouterProviderValue>({
 	routes: new Map(),
 });
 
-type SimpleRouterState = {
+type RouterSwitchState = {
 	currentRoute: GenericRoute;
 	currentPath: string;
 };
 
-type SimpleRouterAction = {
+type RouterSwitchAction = {
 	type: "SET_CURRENT";
 	payload: { route: GenericRoute; path: string };
 };
 
-const simpleRouterReducer = (
-	state: SimpleRouterState,
-	action: SimpleRouterAction,
-): SimpleRouterState => {
+const RouterSwitchReducer = (
+	state: RouterSwitchState,
+	action: RouterSwitchAction,
+): RouterSwitchState => {
 	switch (action.type) {
 		case "SET_CURRENT":
 			if (
@@ -67,22 +67,24 @@ const simpleRouterReducer = (
 	}
 };
 
-const initialState: SimpleRouterState = {
+const initialState: RouterSwitchState = {
 	currentRoute: onHoldRoute,
 	currentPath: onHoldRoute.path,
 };
 
-type SimpleRouterProviderProps<T extends string[]> = {
+type RouterProviderProps<T extends string[]> = {
 	basePath?: string;
 	children?: React.ReactNode;
 	router: RoutesWrapper<T>;
 };
 
-export const SimpleRouterProvider: React.FC<
-	SimpleRouterProviderProps<string[]>
-> = ({ basePath, children, router }) => {
+export const RouterProvider: React.FC<RouterProviderProps<string[]>> = ({
+	basePath,
+	children,
+	router,
+}) => {
 	const routes = router.routes;
-	const [state, dispatch] = useReducer(simpleRouterReducer, initialState);
+	const [state, dispatch] = useReducer(RouterSwitchReducer, initialState);
 
 	useEffect(() => {
 		if (basePath) {
@@ -145,7 +147,7 @@ export const SimpleRouterProvider: React.FC<
 		[routes, basePath],
 	);
 	return (
-		<SimpleRouterContext.Provider
+		<RouterSwitchContext.Provider
 			value={{
 				basePath,
 				navigate,
@@ -160,6 +162,6 @@ export const SimpleRouterProvider: React.FC<
 			}}
 		>
 			{children}
-		</SimpleRouterContext.Provider>
+		</RouterSwitchContext.Provider>
 	);
 };

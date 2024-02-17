@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react";
-import { SimpleRouterContext } from "../SimpleRouterProvider";
+import { RouterSwitchContext } from "../RouterProvider";
 import { generatePathFromRoute } from "../helper";
 import { RoutePathBuilder } from "../types";
 
@@ -9,7 +9,7 @@ type NavigateToProps = {
 
 export const NavigateTo = ({ to: routePathBuilder }: NavigateToProps) => {
 	const { route, pathParams, searchParams } = routePathBuilder;
-	const { navigateReplace, basePath } = useContext(SimpleRouterContext);
+	const { navigateReplace, basePath } = useContext(RouterSwitchContext);
 	const path = generatePathFromRoute(basePath, route, pathParams, searchParams);
 
 	useEffect(() => {

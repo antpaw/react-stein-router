@@ -1,8 +1,8 @@
-import { NavigateTo, simpleRouter } from "../../src/lib.ts";
+import { NavigateTo, steinRouter } from "../../src/lib.ts";
 import AwesomeComponent from "./AwesomeComponent.tsx";
 import MyStuff from "./MyStuff.tsx";
 
-export const router = simpleRouter();
+export const router = steinRouter();
 
 const { root, parent, route, notFound } = router;
 

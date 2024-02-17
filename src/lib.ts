@@ -1,7 +1,7 @@
 export * from "./elements/Link";
 export * from "./elements/NavigateTo";
-export * from "./SimpleRouterError";
-export * from "./SimpleRouter";
-export * from "./SimpleRouterProvider";
+export * from "./RouterError";
+export * from "./RouterSwitch";
+export * from "./RouterProvider";
 
-export { simpleRouter } from "./index";
+export { steinRouter } from "./index";

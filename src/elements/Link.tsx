@@ -1,5 +1,5 @@
 import { AnchorHTMLAttributes, ReactNode, useContext } from "react";
-import { SimpleRouterContext } from "../SimpleRouterProvider";
+import { RouterSwitchContext } from "../RouterProvider";
 import { generatePathFromRoute } from "../helper";
 import { RoutePathBuilder } from "../types";
 
@@ -15,7 +15,7 @@ export const LinkTo = ({
 	...rest
 }: LinkToProps) => {
 	const { route, pathParams, searchParams } = routePathBuilder;
-	const { navigate, basePath } = useContext(SimpleRouterContext);
+	const { navigate, basePath } = useContext(RouterSwitchContext);
 	const path = generatePathFromRoute(basePath, route, pathParams, searchParams);
 	return (
 		// biome-ignore lint/a11y/useValidAnchor: this can not be a <button>
@@ -40,7 +40,7 @@ export const LinkHref = ({
 	...rest
 }: AnchorHTMLAttributes<HTMLAnchorElement>) => {
 	const path = href || "";
-	const { navigate, findRoute } = useContext(SimpleRouterContext);
+	const { navigate, findRoute } = useContext(RouterSwitchContext);
 	return (
 		// biome-ignore lint/a11y/useValidAnchor: this can not be a <button>
 		<a
