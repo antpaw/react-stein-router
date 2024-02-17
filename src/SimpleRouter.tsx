@@ -4,20 +4,11 @@ import { SimpleRouterError } from "./SimpleRouterError";
 import { SimpleRouterContext } from "./SimpleRouterProvider";
 import { isPathMatchOfRoute, parsePathToParams } from "./helper";
 import { notFoundRoute, onHoldRoute, rootRoute } from "./static";
-import { ComponentCallback, GenericRoute } from "./types";
 
 const popstateLog = debug("popstate");
 
-type RoutesWrapper<T extends string[]> = {
-	readonly routes: Map<GenericRoute, ComponentCallback<T>>;
-};
-type SimpleRouterProps<T extends string[]> = {
-	readonly router: RoutesWrapper<T>;
-};
-
-export const SimpleRouter: FC<SimpleRouterProps<string[]>> = ({ router }) => {
-	const routes = router.routes;
-	const { currentRoute, navigateSilent, basePath } =
+export const SimpleRouter: FC = () => {
+	const { currentRoute, navigateSilent, routes, basePath } =
 		useContext(SimpleRouterContext);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: we only need to find the initial path once

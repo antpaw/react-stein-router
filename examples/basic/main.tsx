@@ -11,8 +11,8 @@ if (root === null) {
 
 ReactDOM.createRoot(root).render(
 	<StrictMode>
-		<SimpleRouterProvider basePath="/asdf/noc/vox/oooo">
-			<SimpleRouter router={router} />
+		<SimpleRouterProvider router={router} basePath="/asdf/noc/vox/oooo">
+			<SimpleRouter />
 		</SimpleRouterProvider>
 	</StrictMode>,
 );

@@ -1,7 +1,11 @@
 import { createContext, useCallback, useEffect, useReducer } from "react";
-import { generatePathFromRoute, validatePath } from "./helper";
+import {
+	generatePathFromRoute,
+	isPathMatchOfRoute,
+	validatePath,
+} from "./helper";
 import { onHoldRoute, rootRoute } from "./static";
-import { GenericRoute, RoutePathBuilder } from "./types";
+import { ComponentCallback, GenericRoute, RoutePathBuilder } from "./types";
 
 type SimpleRouterProviderValue = {
 	basePath?: string;
@@ -12,6 +16,12 @@ type SimpleRouterProviderValue = {
 	currentRoute: GenericRoute;
 	currentPath: string;
 	isActive: (route: GenericRoute) => boolean;
+	findRoute: (path: string) => GenericRoute | undefined;
+	routes: Map<GenericRoute, ComponentCallback<string[]>>;
+};
+
+type RoutesWrapper<T extends string[]> = {
+	readonly routes: Map<GenericRoute, ComponentCallback<T>>;
 };
 
 export const SimpleRouterContext = createContext<SimpleRouterProviderValue>({
@@ -22,12 +32,9 @@ export const SimpleRouterContext = createContext<SimpleRouterProviderValue>({
 	currentRoute: onHoldRoute,
 	currentPath: onHoldRoute.path,
 	isActive: () => false,
+	findRoute: () => undefined,
+	routes: new Map(),
 });
-
-type SimpleRouterProviderProps = {
-	basePath?: string;
-	children?: React.ReactNode;
-};
 
 type SimpleRouterState = {
 	currentRoute: GenericRoute;
@@ -65,10 +72,16 @@ const initialState: SimpleRouterState = {
 	currentPath: onHoldRoute.path,
 };
 
-export const SimpleRouterProvider: React.FC<SimpleRouterProviderProps> = ({
-	basePath,
-	children,
-}) => {
+type SimpleRouterProviderProps<T extends string[]> = {
+	basePath?: string;
+	children?: React.ReactNode;
+	router: RoutesWrapper<T>;
+};
+
+export const SimpleRouterProvider: React.FC<
+	SimpleRouterProviderProps<string[]>
+> = ({ basePath, children, router }) => {
+	const routes = router.routes;
 	const [state, dispatch] = useReducer(simpleRouterReducer, initialState);
 
 	useEffect(() => {
@@ -120,6 +133,17 @@ export const SimpleRouterProvider: React.FC<SimpleRouterProviderProps> = ({
 		},
 		[basePath, navigateReplace],
 	);
+	const findRoute = useCallback(
+		(path: string): GenericRoute | undefined => {
+			for (const route of routes.keys()) {
+				if (isPathMatchOfRoute(path, route, basePath)) {
+					return route;
+				}
+			}
+			return undefined;
+		},
+		[routes, basePath],
+	);
 	return (
 		<SimpleRouterContext.Provider
 			value={{
@@ -131,6 +155,8 @@ export const SimpleRouterProvider: React.FC<SimpleRouterProviderProps> = ({
 				currentPath: state.currentPath,
 				isActive,
 				redirect,
+				findRoute,
+				routes,
 			}}
 		>
 			{children}

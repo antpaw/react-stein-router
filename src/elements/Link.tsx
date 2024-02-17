@@ -1,14 +1,11 @@
-import { useContext } from "react";
+import { AnchorHTMLAttributes, ReactNode, useContext } from "react";
 import { SimpleRouterContext } from "../SimpleRouterProvider";
 import { generatePathFromRoute } from "../helper";
 import { RoutePathBuilder } from "../types";
 
-type LinkToProps = Omit<
-	React.AnchorHTMLAttributes<HTMLAnchorElement>,
-	"href"
-> & {
+type LinkToProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href"> & {
 	to: RoutePathBuilder;
-	children?: React.ReactNode;
+	children?: ReactNode;
 };
 
 export const LinkTo = ({
@@ -36,15 +33,29 @@ export const LinkTo = ({
 	);
 };
 
-export const LinkToX = ({ className, children, ...rest }: LinkToProps) => {
-	// activeOptions={{ exact }}
-	// activeProps={{ className: `font-bold ` }}
-
-	const { isActive } = useContext(SimpleRouterContext);
-	const isA = isActive(rest.to.route);
+export const LinkHref = ({
+	href,
+	onClick,
+	children,
+	...rest
+}: AnchorHTMLAttributes<HTMLAnchorElement>) => {
+	const path = href || "";
+	const { navigate, findRoute } = useContext(SimpleRouterContext);
 	return (
-		<LinkTo className={`${className} ${isA ? "yay" : "nay"}`} {...rest}>
+		// biome-ignore lint/a11y/useValidAnchor: this can not be a <button>
+		<a
+			{...rest}
+			href={path}
+			onClick={(event) => {
+				onClick?.(event);
+				const route = findRoute(path);
+				if (route) {
+					event.preventDefault();
+					navigate(route, path);
+				}
+			}}
+		>
 			{children}
-		</LinkTo>
+		</a>
 	);
 };
