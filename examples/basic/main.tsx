@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
-import { SimpleRouter, SimpleRouterProvider } from "../../lib.ts";
+import { SimpleRouter, SimpleRouterProvider } from "../../src/lib.ts";
 import "./index.css";
 import { router } from "./routes.tsx";
 

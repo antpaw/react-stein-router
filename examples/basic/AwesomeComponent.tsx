@@ -1,4 +1,4 @@
-import { LinkTo } from "../../lib";
+import { LinkTo } from "../../src/lib";
 import { routes } from "./routes";
 
 const AwesomeComponent: React.FC<{ koo: string; omg: string }> = ({

@@ -1,4 +1,4 @@
-import { NavigateTo, simpleRouter } from "../../lib.ts";
+import { NavigateTo, simpleRouter } from "../../src/lib.ts";
 import AwesomeComponent from "./AwesomeComponent.tsx";
 import MyStuff from "./MyStuff.tsx";
 

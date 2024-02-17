@@ -20,4 +20,4 @@ npm add --save react-stein-router
 
 ### Example
 
-**[Basic Project](./src/examples/basic)**
+**[Basic Project](./examples/basic)**
