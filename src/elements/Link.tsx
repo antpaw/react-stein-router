@@ -34,24 +34,29 @@ export const LinkTo = ({
 };
 
 export const LinkHref = ({
-	href,
+	href: hrefWithBase,
+	hrefWithoutBase,
 	onClick,
 	children,
 	...rest
-}: AnchorHTMLAttributes<HTMLAnchorElement>) => {
-	const path = href || "";
-	const { navigate, findRoute } = useContext(RouterSwitchContext);
+}: AnchorHTMLAttributes<HTMLAnchorElement> & {
+	hrefWithoutBase?: string;
+}) => {
+	const { navigate, findRoute, basePath } = useContext(RouterSwitchContext);
+	const href = hrefWithoutBase
+		? `${basePath || ""}${hrefWithoutBase}`
+		: `${hrefWithBase || ""}`;
 	return (
 		// biome-ignore lint/a11y/useValidAnchor: this can not be a <button>
 		<a
 			{...rest}
-			href={path}
+			href={href}
 			onClick={(event) => {
 				onClick?.(event);
-				const route = findRoute(path);
+				const route = findRoute(href);
 				if (route) {
 					event.preventDefault();
-					navigate(route, path);
+					navigate(route, href);
 				}
 			}}
 		>
