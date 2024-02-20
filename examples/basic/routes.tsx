@@ -1,6 +1,5 @@
 import { NavigateTo, steinRouter } from "../../src/lib.ts";
 import AwesomeComponent from "./AwesomeComponent.tsx";
-import MyStuff from "./MyStuff.tsx";
 
 export const router = steinRouter();
 
@@ -33,7 +32,7 @@ export const routes = {
 		myParent,
 	),
 
-	fooPath: route("/foo-yolo", (_pathParams) => <MyStuff />),
+	fooPath: route("/foo-yolo", (_pathParams) => <p>Test</p>),
 
 	notFound: notFound((_pathParams, _searchParams) => <p>404 - not found</p>),
 };
