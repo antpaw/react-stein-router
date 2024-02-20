@@ -1,4 +1,6 @@
-# React Stein Router 
+# React Stein Router
+
+![React Stein Router Header](https://github.com/antpaw/react-stein-router/raw/main/media/repo-header.png)
 
 A simple react dom router that is typesafe
 
