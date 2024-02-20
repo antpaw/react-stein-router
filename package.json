@@ -2,7 +2,7 @@
 	"name": "react-stein-router",
 	"description": "A simple react dom router that is typesafe",
 	"license": "MIT",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"type": "module",
 	"main": "./dist/react-stein-router.umd.js",
 	"module": "./dist/react-stein-router.es.js",
