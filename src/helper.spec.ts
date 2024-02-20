@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import { createRoute } from "./Route";
 import {
 	generatePathFromRoute,
-	generateRegex,
+	generateRegexString,
+	isMatch,
 	isPathMatchOfRoute,
 	parsePathToParams,
 	parseVariablesFromPath,
@@ -104,15 +105,15 @@ it("parsePathToParams search", () => {
 });
 
 it("generateRegex ", () => {
-	expect(generateRegex("/route/{blue}/foo", ["blue"])).toStrictEqual(
-		/^\/route\/([a-zA-Z0-9]+)\/foo(\/|)$/,
-	);
+	expect(
+		new RegExp(generateRegexString("/route/{blue}/foo", ["blue"])),
+	).toStrictEqual(/\/route\/([a-zA-Z0-9]+)\/foo/);
 });
 
 it("generateRegex with base", () => {
-	expect(generateRegex("/route/{blue}/foo", ["blue"])).toStrictEqual(
-		/^\/route\/([a-zA-Z0-9]+)\/foo(\/|)$/,
-	);
+	expect(
+		new RegExp(generateRegexString("/route/{blue}/foo", ["blue"])),
+	).toStrictEqual(/\/route\/([a-zA-Z0-9]+)\/foo/);
 });
 
 it("validatePath", () => {
@@ -182,5 +183,46 @@ describe("isPathMatchOfRoute", () => {
 		expect(isPathMatchOfRoute("/roo/asdf/route/id", route, basePath)).toBe(
 			false,
 		);
+	});
+
+	it("useWithout is true", () => {
+		const route = createRoute("/home");
+		const basePath = "";
+		expect(isPathMatchOfRoute("/home/1", route, basePath, true)).toBe(true);
+		expect(isPathMatchOfRoute("/about/1", route, basePath, true)).toBe(false);
+		expect(isPathMatchOfRoute("/home", route, basePath, true)).toBe(true);
+	});
+});
+
+describe("isMatch", () => {
+	it("when path matches with isExact", () => {
+		const route = createRoute("/home");
+		expect(isMatch("/home", "", { route }, true)).toBe(true);
+		expect(isMatch("/about", "/home", { route }, false)).toBe(false);
+	});
+
+	it("when path with vars matches with isExact", () => {
+		const route = createRoute("/home/{id}");
+		expect(
+			isMatch("/base/home/1", "/base", { route, pathParams: { id: 2 } }, true),
+		).toBe(false);
+		expect(
+			isMatch(
+				"/base/home/1",
+				"/base",
+				{ route, pathParams: { id: 2 } },
+				true,
+				true,
+			),
+		).toBe(false);
+		expect(
+			isMatch("/home/2", "", { route, pathParams: { id: 2 } }, false),
+		).toBe(true);
+		expect(
+			isMatch("/home/1", "", { route, pathParams: { id: 2 } }, false, true),
+		).toBe(true);
+		expect(
+			isMatch("/home/1", "/foo", { route, pathParams: { id: 2 } }, false, true),
+		).toBe(false);
 	});
 });

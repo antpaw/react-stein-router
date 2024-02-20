@@ -12,7 +12,8 @@ export type Route<
 	readonly id: number;
 	readonly pathParamsVars: (T[number] | TT[number])[];
 	readonly path: string;
-	readonly regex: RegExp;
+	readonly regexWith: RegExp;
+	readonly regexWithout: RegExp;
 };
 export type GenericRoute = Route<readonly string[], readonly string[]>;
 

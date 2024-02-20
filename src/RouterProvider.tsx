@@ -1,6 +1,7 @@
 import { createContext, useCallback, useEffect, useReducer } from "react";
 import {
 	generatePathFromRoute,
+	isMatch,
 	isPathMatchOfRoute,
 	validatePath,
 } from "./helper";
@@ -15,7 +16,11 @@ type RouterProviderValue = {
 	redirect: (to: RoutePathBuilder) => void;
 	currentRoute: GenericRoute;
 	currentPath: string;
-	isActive: (route: GenericRoute) => boolean;
+	isActive: (
+		to: RoutePathBuilder,
+		isExact: boolean,
+		onlyParent: boolean,
+	) => boolean;
 	findRoute: (path: string) => GenericRoute | undefined;
 	routes: Map<GenericRoute, ComponentCallback<string[]>>;
 };
@@ -93,10 +98,16 @@ export const RouterProvider: React.FC<RouterProviderProps<string[]>> = ({
 	}, [basePath]);
 
 	const isActive = useCallback(
-		(someRoute: GenericRoute): boolean => {
-			return state.currentRoute === someRoute;
+		(to: RoutePathBuilder, isExact = true, onlyParent = false) => {
+			return isMatch(
+				window.location.pathname,
+				basePath ?? "",
+				to,
+				isExact,
+				onlyParent,
+			);
 		},
-		[state.currentRoute],
+		[basePath],
 	);
 	const navigate = useCallback((route: GenericRoute, path: string) => {
 		history.pushState({ id: route.id, path }, "", path);

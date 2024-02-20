@@ -3,6 +3,7 @@ import {
 	ExtractPathParams,
 	GenericRoute,
 	PathParamRecord,
+	RoutePathBuilder,
 	SearchParamRecord,
 } from "./types";
 
@@ -15,6 +16,14 @@ export function validatePath(path: string) {
 			throw new RouterError(`Path must start with a slash => / "${path}"`);
 		}
 	}
+}
+
+export function generatePathFromRoutePathBuilder(
+	basePath: string | undefined,
+	routePathBuilder: RoutePathBuilder,
+) {
+	const { route, pathParams, searchParams } = routePathBuilder;
+	return generatePathFromRoute(basePath, route, pathParams, searchParams);
 }
 
 export function generatePathFromRoute(
@@ -54,7 +63,7 @@ export function parsePathToParams(
 	search = "",
 ): Params {
 	const withoutBasePath = basePath ? replaceBasePath(path, basePath) : path;
-	const match = route.regex.exec(withoutBasePath);
+	const match = route.regexWithout.exec(withoutBasePath);
 	const patterns = route.pathParamsVars;
 
 	let idMap: Map<string, string> | undefined;
@@ -71,28 +80,32 @@ export function parsePathToParams(
 	};
 }
 
-export function generateRegex(input: string, pathParamsVars: string[]): RegExp {
+export function generateRegexString(
+	input: string,
+	pathParamsVars: string[],
+): string {
 	let path = input;
 	for (const key of pathParamsVars) {
 		path = path.replace(`{${key}}`, "([a-zA-Z0-9]+)");
 	}
-	path = path.replace(/\/\*$/, ".*");
-	return new RegExp(`^${path}(/|)$`);
+	return path.replace(/\/\*$/, ".*");
 }
 
 export function isPathMatchOfRoute(
 	path: string,
 	route: GenericRoute,
 	basePath: string | undefined = undefined,
+	useWithout = false,
 ): boolean {
+	const regex = useWithout ? route.regexWithout : route.regexWith;
 	if (basePath) {
 		const withoutBasePath = replaceBasePath(path, basePath);
 		return (
-			(path.startsWith(basePath) && route.regex.test(withoutBasePath)) ||
+			(path.startsWith(basePath) && regex.test(withoutBasePath)) ||
 			basePath === path
 		);
 	}
-	return route.regex.test(path);
+	return regex.test(path);
 }
 
 function replaceBasePath(path: string, basePath: string) {
@@ -107,4 +120,19 @@ export function parseVariablesFromPath<Path extends string>(path: Path) {
 		variables.push(matches[1]);
 	}
 	return variables as ExtractPathParams<Path>[];
+}
+
+export function isMatch(
+	pathToMatch: string,
+	basePath: string,
+	to: RoutePathBuilder,
+	isExact = true,
+	onlyParent = false,
+) {
+	if (isExact) {
+		const end = onlyParent ? "" : "(/|)$";
+		const path = generatePathFromRoutePathBuilder(basePath, to);
+		return new RegExp(`^${path}${end}`).test(pathToMatch);
+	}
+	return isPathMatchOfRoute(pathToMatch, to.route, basePath, onlyParent);
 }

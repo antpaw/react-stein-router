@@ -1,4 +1,8 @@
-import { generateRegex, parseVariablesFromPath, validatePath } from "./helper";
+import {
+	generateRegexString,
+	parseVariablesFromPath,
+	validatePath,
+} from "./helper";
 import { ParentRoute, Route } from "./types";
 
 const EMPTY_PARENT: ParentRoute<[]> = {
@@ -27,11 +31,14 @@ function createRouteWithVars<
 	const id = routeId++;
 	const path = `${parent.path}${initPath}`;
 	const pathParamsVars = [...parent.pathParamsVars, ...initPathParamsVars];
-	const regex = generateRegex(path, pathParamsVars);
+	const regexWithoutString = generateRegexString(path, pathParamsVars);
+	const regexWithout = new RegExp(`^${regexWithoutString}`);
+	const regexWith = new RegExp(`^${regexWithoutString}(/|)$`);
 	return {
 		id,
 		path,
 		pathParamsVars,
-		regex,
+		regexWithout,
+		regexWith,
 	};
 }
